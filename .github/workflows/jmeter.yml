@@ -1,32 +1,35 @@
-name: JMeter
-
+name: JMeter - JSONPlaceholder
+ 
 on:
-  workflow_dispatch:  # Permite ejecutarlo manualmente desde Actions
-
+  workflow_dispatch:
+  push:
+    paths:
+      - 'TestPlans/jsonplaceholder_prueba.jmx'
+      - '.github/workflows/jmeter.yml'
+ 
 jobs:
-  jmeter:
+  run-jmeter:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Install JMeter
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jmeter
-
-      - name: Run JMeter test
-        run: |
-          jmeter -n -t TestPlans/jsonplaceholder_prueba.jmx -l results.jtl -e -o reports
-
-      - name: Upload raw results (.jtl)
+ 
+      - name: Create reports dir
+        run: mkdir -p reports/html
+ 
+      - name: Run JMeter test (PerfAction)
+        uses: QAInsights/PerfAction@v5.6.2
+        with:
+          test-plan-path: ./TestPlans/jsonplaceholder_prueba.jmx
+          args: "-e -o ./reports/html/"
+ 
+      - name: Upload JTL results
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
           path: results.jtl
-
-      - name: Upload HTML dashboard
+ 
+      - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-html-report
