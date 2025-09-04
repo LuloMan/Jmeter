@@ -18,17 +18,16 @@ jobs:
 
       - name: Run JMeter test
         run: |
-          mkdir -p results
-          jmeter -n -t TestPlans/jsonplaceholder_prueba.jmx -l results/result.jtl -e -o results/report
+          jmeter -n -t TestPlans/jsonplaceholder_prueba.jmx -l results.jtl -e -o reports
 
       - name: Upload raw results (.jtl)
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-results
-          path: results/result.jtl
+          path: results.jtl
 
       - name: Upload HTML dashboard
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-html-report
-          path: results/report
+          path: reports
